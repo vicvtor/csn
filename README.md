@@ -1,0 +1,2 @@
+# csn
+Cybersport news parser

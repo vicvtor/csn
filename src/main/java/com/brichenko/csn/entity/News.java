@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Сущность новости.
@@ -56,7 +57,7 @@ public class News {
      * Дата публикации.
      */
     @NotNull
-    private LocalDateTime published;
+    private ZonedDateTime published;
 
     /**
      * Дата загрузки.
@@ -75,10 +76,16 @@ public class News {
     private String url;
 
     /**
-     * Имя Хоста
+     * Имя хоста.
      */
     @NotNull
     private String host;
+
+    /**
+     * Псевдоним хоста.
+     */
+    @NotNull
+    private String hostName;
 
     /**
      * Категория новости.

@@ -7,53 +7,59 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
-/**
- * Парсер новостей с портала www.cybersport.ru.
- */
 @Component
-public class CybersportParser extends AbstractParser {
-
+public class SportsRuParser extends AbstractParser {
     @Override
     public String getNewsUrl() {
-        /*DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        StringBuilder url = new StringBuilder(getHostName());
-        url.append("/news/from/").append(LocalDateTime.now().minusDays(7).format(formatter));
-        url.append("/to/").append(LocalDateTime.now().format(formatter));
-        return url.toString();*/
+        return getHostUrl() + "/news/";
+    }
 
-        return getHostName();
+    @Override
+    public String getHostUrl() {
+        return "https://cyber.sports.ru";
     }
 
     @Override
     public String getHostName() {
-        return "https://www.cybersport.ru" ;
+        return "Sports";
     }
 
     @Override
     public Elements getRawNews(Document doc) {
-        return doc.select(".community__item");
+        return doc.select(".active-panel .news p");
     }
 
     @Override
     public String parseTitle(Element e) {
-        return e.selectFirst(".community__title").selectFirst("a").text();
+        return e.select("strong").text();
     }
 
     @Override
-    public LocalDateTime parsePublished(Element e) {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String date = resolveDateElement(e).attr("datetime").split("T")[0];
-        String time = e.selectFirst(".community__title").child(0).text();
+    public ZonedDateTime parsePublished(Element e) {
 
-        return LocalDateTime.parse(date + ' ' + time, formatter);
+        formatter = DateTimeFormatter.ofPattern("d MMMM yyyy HH:mm").withLocale(new Locale("ru","RU"));
+
+        String date = resolveDateElement(e).text();
+        String time = e.selectFirst("span").text();
+
+        StringBuilder stringDate = new StringBuilder(date);
+
+        stringDate.append(" ")
+                .append(Year.now().getValue())
+                .append(" ").append(time);
+
+        return ZonedDateTime.parse(stringDate.toString(), formatter.withZone(ZoneOffset.ofHours(3)));
     }
 
     @Override
     public String parseUrl(Element e) {
-        return e.selectFirst(".community__title").child(2).attr("href");
+        return e.select(".short-text").attr("href");
     }
 
     @Override
@@ -63,7 +69,7 @@ public class CybersportParser extends AbstractParser {
 
     @Override
     public String parseAnnounce(Element e) {
-        return null;
+        return e.select(".short-text").attr("title");
     }
 
     @Override
@@ -83,19 +89,25 @@ public class CybersportParser extends AbstractParser {
 
     @Override
     public NewsCategory parseCategory(Element e) {
-
-        Element cat = e.selectFirst(".icon-games");
-
+        String cat = e.select(".short-text").attr("href");
         NewsCategory result = NewsCategory.OTHER;
         if (cat != null) {
-            if (cat.is(".icon-games--dota2")) {
-                result = NewsCategory.DOTA;
-            } else if (cat.is(".icon-games--cs-go")) {
-                result = NewsCategory.CS;
-            } else if (cat.is(".icon-games--overwatch")) {
-                result = NewsCategory.OW;
-            } else if (cat.is(".icon-games--lol")) {
-                result = NewsCategory.LOL;
+            switch (cat.split("/")[1]) {
+                case "lol":
+                    result = NewsCategory.LOL;
+                    break;
+                case "dota2":
+                    result = NewsCategory.DOTA;
+                    break;
+                case "hs":
+                    result = NewsCategory.HS;
+                    break;
+                case "cs":
+                    result = NewsCategory.CS;
+                    break;
+                case "ow":
+                    result = NewsCategory.OW;
+                    break;
             }
         }
 
@@ -104,7 +116,7 @@ public class CybersportParser extends AbstractParser {
 
     @Override
     public int parseCommentsCount(Element e) {
-        return Integer.valueOf(e.selectFirst(".comment-counter__count").text());
+        return Integer.parseInt(e.children().last().text());
     }
 
     /**
@@ -117,8 +129,8 @@ public class CybersportParser extends AbstractParser {
      */
     private Element resolveDateElement(Element e){
         Element prevElement = e.previousElementSibling();
-        if (prevElement.hasClass("community__date")) {
-            return  prevElement.selectFirst("time");
+        if (prevElement.is("b")) {
+            return  prevElement;
         } else {
             return resolveDateElement(prevElement);
         }

@@ -66,7 +66,8 @@ public abstract class AbstractParser implements IAbstractParser {
         news.setAnnonce(parseAnnounce(e));
         news.setImage(parseImage(e));
         news.setCategory(parseCategory(e));
-        news.setHost(getHostName());
+        news.setHost(getHostUrl());
+        news.setHostName(getHostName());
 
         return news;
     }

@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Интерфейс парсера.
@@ -18,6 +18,13 @@ public interface IAbstractParser {
      * @return - адрес страницы с новостями.
      */
     String getNewsUrl();
+
+    /**
+     * Возвращает адрес хоста, с которого будет производиться парсинг новостей.
+     *
+     * @return - url хоста.
+     */
+    String getHostUrl();
 
     /**
      * Возвращает имя хоста, с которого будет производиться парсинг новостей.
@@ -42,11 +49,11 @@ public interface IAbstractParser {
     String parseTitle(Element e);
 
     /**
-     * Парсит и взвращает дату публикации новости из dom-элемента.
+     * Парсит и взвращает дату публикации новости из dom-элемента(с учетом таймзоны).
      * @param e - dom-элемент.
      * @return - дата публикации новости.
      */
-    LocalDateTime parsePublished(Element e);
+    ZonedDateTime parsePublished(Element e);
 
     /**
      * Парсит и взвращает ссылку на новость из dom-элемента.

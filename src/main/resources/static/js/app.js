@@ -12,24 +12,22 @@ var NewsItem = {
         item: Object
     },
     template: '<div class="row my-2 mx-0 p-0">' +
-        '           <div class="col-data text-right py-0">' +
-        '               <div class="text-muted"><small>{{ moment(item.published).fromNow(true) }}</small></div>' +
-        '               <span v-if="item.commentsCount > 0" class="badge badge-secondary">{{ item.commentsCount }}</span>' +
+        '           <div class="col-data text-right">' +
+        '               <div class="text-muted"><small>{{ moment(item.published).fromNow() }}</small></div>' +
         '           </div> ' +
         '           <div class="col-md px-1 py-0">' +
-        '               <a :href="item.host + item.url" target="_blank" rel="noopener noreferrer" class="text-dark w-100 news-title py-1">{{  item.title  }}</a>           ' +
-        '               <div class="w-100"><small class="text-muted">{{ host_name }}</small></div>' +
+        '               <a :href="item.host + item.url" target="_blank" rel="noopener noreferrer" class="text-dark w-100 news-title py-1">{{  item.title  }}</a>' +
+        '               <div class="w-100">' +
+        '                   <small><a class="text-muted" target="_blank" rel="noopener noreferrer" v-bind:href="item.host">{{ item.hostName }}</a></small>' +
+        '                   <small v-if="item.commentsCount > 0" >' +
+        '                       <img src="../img/commentary.svg" class="icon-comments" />{{ item.commentsCount }}' +
+        '                   </small>' +
+        '               </div>' +
         '           </div> ' +
         '      </div>',
-    computed: {
-        host_name: function () {
-            var host = this.item.host.replace(/^(http(s)?(:\/\/))?(www\.)?/i,'');
-            return host.charAt(0).toUpperCase() + host.slice(1);
-        }
-    },
     methods: {
         moment: function (date) {
-            return moment(date);
+            return moment(date)
         }
     }
 };
@@ -163,7 +161,6 @@ var routes = [
     {path: '/about', component: AboutPage}
 ];
 
-
 var router = new VueRouter({routes});
 
 var app = new Vue({
@@ -172,6 +169,20 @@ var app = new Vue({
     components: {
         'page_news': NewsPage,
         'page_about': AboutPage
+    },
+    methods: {
+        getCookie (name) {
+            const match = document.cookie.match(new RegExp(name + '=([^;]+)'));
+            if (match) return match[1];
+            return
+        }
+    },
+    created() {
+        const lang = this.getCookie('lang');
+        if (lang) {
+            moment.locale(lang);
+        } else {
+            moment.locale('ru');
+        }
     }
-
 });

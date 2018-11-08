@@ -55,7 +55,7 @@ var NewsColumn = {
         '                    </select>' +
         '                </div>' +
         '                <bounce-loader :loading="loading" :color="loader_color" :size="loader_size" class="spinner"></bounce-loader>          \n' +
-        '                <div class="news-container border-right">' +
+        '                <div class="news-container">' +
         '                   <news-item v-for="(item, index) in news" :item="item" v-bind:key="item.id" />' +
         '               </div>' +
         '       </div>',
@@ -150,7 +150,27 @@ var NewsPage = {
  * Компонент страницы "О нас".
  * @type {{template: string}}
  */
-var AboutPage = {template: '<div><p>About</p></div>'};
+var AboutPage = {
+    data: function(){
+        return {
+            about: ''
+        }
+    },
+    template: '<div class="p-5" v-html="about"></div>',
+    watch: {
+        about(newValue) {
+            localStorage.about = newValue
+        }
+    },
+    mounted() {
+        if (localStorage.about) {
+            this.about = parseInt(localStorage.about)
+        }
+        axios
+            .get('/api/about')
+            .then(response => (this.about= response.data))
+    }
+};
 
 /**
  * Зарегистрированные маршруты.

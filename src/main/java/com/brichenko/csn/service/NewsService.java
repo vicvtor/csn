@@ -32,7 +32,7 @@ public class NewsService implements INewsService{
         List<News> savedNews = new ArrayList<>();
 
         for (News n : news) {
-            if  (repository.findByTitle(n.getTitle()).isEmpty()) {
+            if  (repository.findByUrl(n.getUrl()).isEmpty()) {
                 savedNews.add(repository.save(n));
                 System.out.print("News " + n.getTitle() + " from host " + n.getHost() + " saved.");
             }

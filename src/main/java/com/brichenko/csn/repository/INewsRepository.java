@@ -20,6 +20,6 @@ public interface INewsRepository extends JpaRepository<News, Long> {
     List<News> findByCategoryOrderByPublishedDesc(NewsCategory category);
 
 
-    List<News> findByTitle(String title);
+    List<News> findByUrl(String title);
 
 }

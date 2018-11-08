@@ -49,7 +49,7 @@ public class ApiController {
      * @return - список новостей.
      */
     @GetMapping("/news/{category}")
-    public List<News> parseCyberSport(@PathVariable(required = false) String category) {
+    public List<News> getNews(@PathVariable(required = false) String category) {
 
         if (category != null && !category.equals("ALL")) {
             NewsCategory cat = NewsCategory.valueOf(category);
@@ -57,6 +57,11 @@ public class ApiController {
         }
 
         return service.getNews();
+    }
+    
+    @GetMapping("/about")
+    public String getAbout(Locale locale){
+        return messageSource.getMessage("about", null, locale);
     }
 
 }

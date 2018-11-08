@@ -11,10 +11,19 @@ public class StaticController {
 
     /**
      * Главная страница.
-     * @return - шаблон страницы.
+     * @return - главная страница.
      */
     @GetMapping("/")
     public String getIndexPage(){
+        return "index";
+    }
+
+    /**
+     * Загрушка для смены локали.
+     * @return - главная страница.
+     */
+    @GetMapping("/lang")
+    public String changeLocale(){
         return "index";
     }
 

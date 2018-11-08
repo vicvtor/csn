@@ -34,26 +34,26 @@ public class CybersportRuParser extends AbstractParser {
 
     @Override
     public Elements getRawNews(Document doc) {
-        return doc.select(".community__item");
+        return doc.select(".news-sidebar__post");
     }
 
     @Override
     public String parseTitle(Element e) {
-        return e.selectFirst(".community__title").selectFirst("a").text();
+        return e.selectFirst(".news-sidebar__link").text();
     }
 
     @Override
     public ZonedDateTime parsePublished(Element e) {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String date = resolveDateElement(e).attr("datetime").split("T")[0];
-        String time = e.selectFirst(".community__title").child(0).text();
+        String time = e.selectFirst("p").text();
 
         return ZonedDateTime.parse(date + " " + time, formatter.withZone(ZoneOffset.ofHours(3)));
     }
 
     @Override
     public String parseUrl(Element e) {
-        return e.selectFirst(".community__title").child(2).attr("href");
+        return e.selectFirst(".news-sidebar__link").attr("href");
     }
 
     @Override
@@ -84,17 +84,17 @@ public class CybersportRuParser extends AbstractParser {
     @Override
     public NewsCategory parseCategory(Element e) {
 
-        Element cat = e.selectFirst(".icon-games");
+        Element cat = e.selectFirst(".icon-disciplines").children().first();
 
         NewsCategory result = NewsCategory.OTHER;
         if (cat != null) {
-            if (cat.is(".icon-games--dota2")) {
+            if (cat.is("#icon-game--dota2")) {
                 result = NewsCategory.DOTA;
-            } else if (cat.is(".icon-games--cs-go")) {
+            } else if (cat.is("#icon-game--cs-go")) {
                 result = NewsCategory.CS;
-            } else if (cat.is(".icon-games--overwatch")) {
+            } else if (cat.is("#icon-game--overwatch")) {
                 result = NewsCategory.OW;
-            } else if (cat.is(".icon-games--lol")) {
+            } else if (cat.is("#icon-game--lol")) {
                 result = NewsCategory.LOL;
             }
         }
@@ -116,11 +116,11 @@ public class CybersportRuParser extends AbstractParser {
      * @return - элемент, содержащий дату.
      */
     private Element resolveDateElement(Element e){
-        Element prevElement = e.previousElementSibling();
-        if (prevElement.hasClass("community__date")) {
+        Element prevElement = e.parent().previousElementSibling();
+        if (prevElement.hasClass("sticky--placeholder")) {
             return  prevElement.selectFirst("time");
         } else {
-            return resolveDateElement(prevElement);
+            return resolveDateElement(prevElement.child(0));
         }
     }
 }

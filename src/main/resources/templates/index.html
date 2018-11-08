@@ -30,6 +30,15 @@
                     <router-link class="nav-link" to="/" th:text="#{menu_news}"></router-link>
                     <router-link class="nav-link" to="/about" th:text="#{menu_about}"></router-link>
                 </div>
+
+                <div class="navbar-nav ml-auto">
+                    <img th:src="@{img/globe.svg}" />
+                    <a class="nav-item nav-link pl-1" th:href="${#strings.substring(#locale, 0,2) == 'ru'} ? 'lang?lang=en' : 'lang?lang=ru'" href="#">
+
+                        <span class="text-uppercase" th:text="${#strings.substring(#locale, 0,2)}"></span>
+                    </a>
+                </div>
+
             </div>
         </nav>
         <div class="row d-flex flex-fill m-0">

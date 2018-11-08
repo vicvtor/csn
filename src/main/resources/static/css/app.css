@@ -15,7 +15,7 @@ select.form-control {
 .col-data {
     display:inline-block;
     width:80px;
-    padding:0 5px 0 10px;
+    padding:0 5px 0 5px;
 }
 
 #app {
@@ -27,7 +27,7 @@ select.form-control {
     position: absolute;
     top:38px;
     bottom: 0;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
 .news-container-btns {

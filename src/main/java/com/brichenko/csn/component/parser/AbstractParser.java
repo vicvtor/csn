@@ -36,7 +36,7 @@ public abstract class AbstractParser implements IAbstractParser {
      */
     public void parseNews(){
         try {
-            doc = Jsoup.connect(getNewsUrl()).get();
+            doc = Jsoup.connect(getNewsUrl()).timeout(5000).get();
 
             service.saveNews(getRawNews(doc)
                     .stream()
@@ -45,6 +45,7 @@ public abstract class AbstractParser implements IAbstractParser {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println(getClass());
         }
     }
 
